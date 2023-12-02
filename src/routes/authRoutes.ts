@@ -1,5 +1,4 @@
 //routes/authRoutes.js
-import { authenticateUser } from '../middleware/authMiddleware';
 import { Response, Request } from 'express';
 import User, { UserAttributes } from '../models/User';
 import bcrypt from 'bcrypt';
@@ -42,12 +41,6 @@ router.post('/login', async (req: Request, res: Response) => {
   req.session.user = authenticatedUser;
  
   res.json({ success: true, user: authenticatedUser });
-});
- 
-router.get('/profile', authenticateUser, (req: Request, res: Response) => {
-  // User profile information
-  const user = req.session.user as AuthenticatedUser;
-  res.json({ user });
 });
  
 export default router;

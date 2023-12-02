@@ -21,13 +21,12 @@ import signup from './routes/signup';
 const app = express();
 
 sequelize
-  .sync({ force: process.env.FORCE_SYNC === 'false' })
+  .sync()
   .then(()=>{
   console.log('Connection to the database has been established successfully.')
       
     // Add your data insertion code here
     return Product.create({
-        id: 1,
         name: 'smart-watch',
         image: 'sample-image-url',
         brand: 'hryfine',

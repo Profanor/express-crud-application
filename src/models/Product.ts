@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../database/database'; 
 
 interface productAttributes {
-  id: number;
+  id?: number;
   name: string;
   image: string;
   brand: string;

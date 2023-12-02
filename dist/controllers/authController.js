@@ -27,6 +27,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         //create a new user
         const createdUser = yield User_1.default.create({
+            id,
             fullname,
             password: hashedPassword,
             gender,

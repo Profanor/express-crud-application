@@ -20,6 +20,7 @@ const signup = async (req: Request, res: Response) => {
 
     //create a new user
     const createdUser = await User.create({
+      id,
       fullname,
       password: hashedPassword,
       gender,

@@ -21,12 +21,11 @@ const login_1 = __importDefault(require("./routes/login"));
 const signup_1 = __importDefault(require("./routes/signup"));
 const app = (0, express_1.default)();
 database_1.default
-    .sync({ force: process.env.FORCE_SYNC === 'false' })
+    .sync()
     .then(() => {
     console.log('Connection to the database has been established successfully.');
     // Add your data insertion code here
     return Product_1.default.create({
-        id: 1,
         name: 'smart-watch',
         image: 'sample-image-url',
         brand: 'hryfine',
