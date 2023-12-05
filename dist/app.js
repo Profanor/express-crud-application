@@ -10,8 +10,10 @@ const path_1 = __importDefault(require("path"));
 const morgan_1 = __importDefault(require("morgan"));
 const http_errors_1 = __importDefault(require("http-errors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const database_1 = __importDefault(require("./database/database"));
-const Product_1 = __importDefault(require("./models/Product"));
+const init_db_1 = __importDefault(require("./init-db"));
+const passport_1 = __importDefault(require("passport"));
+require("./models/User");
+require("./models/Product");
 // Routes
 const index_1 = __importDefault(require("./routes/index"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
@@ -19,29 +21,12 @@ const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
 const users_1 = __importDefault(require("./routes/users"));
 const login_1 = __importDefault(require("./routes/login"));
 const signup_1 = __importDefault(require("./routes/signup"));
+const profile_1 = __importDefault(require("./routes/profile"));
 const app = (0, express_1.default)();
-database_1.default
-    .sync()
-    .then(() => {
-    console.log('Connection to the database has been established successfully.');
-    // Add your data insertion code here
-    return Product_1.default.create({
-        name: 'smart-watch',
-        image: 'sample-image-url',
-        brand: 'hryfine',
-        category: 'Men accessories',
-        description: 'a small portable watch',
-        price: 19.99,
-        countInStock: 10,
-        rating: 4,
-        numReviews: 15,
-    });
-})
-    .then((newProduct) => {
-    console.log('Sample product inserted successfully:', newProduct);
-})
-    .catch((error) => {
-    console.error('Unable to connect to the database:', error);
+// Initialize the database with sample data
+app.use(async (req, res, next) => {
+    await (0, init_db_1.default)(req);
+    next();
 });
 const PORT = process.env.PORT || 3000; //reads and loads the port value from .env
 // view engine setup
@@ -57,6 +42,9 @@ app.use((0, express_session_1.default)({
     resave: false,
     saveUninitialized: true,
 }));
+//passport initialization
+app.use(passport_1.default.initialize());
+app.use(passport_1.default.session());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 // use your routes
 app.use('/', index_1.default);
@@ -65,6 +53,7 @@ app.use('/users', users_1.default);
 app.use('/', productRoutes_1.default);
 app.use('/', login_1.default);
 app.use('/', signup_1.default);
+app.use('/', profile_1.default);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     next((0, http_errors_1.default)(404));

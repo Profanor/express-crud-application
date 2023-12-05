@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -15,24 +6,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //routes/productRoutes.js
 const express_1 = __importDefault(require("express"));
 const authMiddleware_1 = require("../middleware/authMiddleware");
-const Product_1 = require("../models/Product");
+const Product_1 = __importDefault(require("../models/Product"));
 const router = express_1.default.Router();
 // Get all products
-router.get('/products', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/products', async (req, res) => {
     try {
-        const allProducts = yield Product_1.Product.findAll();
-        res.json(allProducts);
+        const allProducts = await Product_1.default.findAll();
+        res.render('products', { title: 'All Products', products: allProducts });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error fetching products:', error);
+        res.render('error', { error: 'Internal server error' });
     }
-}));
-router.post('/products', authMiddleware_1.authenticateUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.post('/products', authMiddleware_1.authenticateUser, async (req, res) => {
+    //assuming i have a logged-in user with userId stored in the session
+    const userIdFromSession = req.session.user?.id;
+    if (!userIdFromSession) {
+        return res.status(401).json({ error: 'User not authenticated.' });
+    }
     try {
-        const { id, name, image, brand, category, description, price, countInStock, rating, numReviews } = req.body;
-        const newProduct = yield Product_1.Product.create({
-            name,
+        const { id, userId, name, image, brand, category, description, price, countInStock, rating, numReviews } = req.body;
+        const newProduct = await Product_1.default.create({
+            userId: userIdFromSession,
+            name: req.body.name,
             image,
             brand,
             category,
@@ -43,17 +40,17 @@ router.post('/products', authMiddleware_1.authenticateUser, (req, res) => __awai
             numReviews,
             id,
         });
-        res.json(newProduct);
+        return res.json({ success: true, product: newProduct });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error creating product:', error);
+        res.status(500).json({ error: 'Internal server error.' });
     }
-}));
-router.put('/products/:id', authMiddleware_1.authenticateUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.put('/products/:id', authMiddleware_1.authenticateUser, async (req, res) => {
     try {
         const productId = req.params.id;
-        const updatedProduct = yield Product_1.Product.update({
+        const updatedProduct = await Product_1.default.update({
         // Update fields as needed
         }, {
             where: {
@@ -66,14 +63,11 @@ router.put('/products/:id', authMiddleware_1.authenticateUser, (req, res) => __a
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}));
-// For demonstration purposes, let's assume successful update
-const updatedProduct = { name: 'Updated Product', /* updated fields */ };
-res: Response.json(updatedProduct);
-router.delete('/products/:id', authMiddleware_1.authenticateUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.delete('/products/:id', authMiddleware_1.authenticateUser, async (req, res) => {
     try {
         const productId = req.params.id;
-        yield Product_1.Product.destroy({
+        await Product_1.default.destroy({
             where: {
                 id: productId,
             },
@@ -84,7 +78,5 @@ router.delete('/products/:id', authMiddleware_1.authenticateUser, (req, res) => 
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}));
-// For demonstration purposes, let's assume successful deletion
-res: Response.json({ message: 'Product deleted' });
+});
 exports.default = router;

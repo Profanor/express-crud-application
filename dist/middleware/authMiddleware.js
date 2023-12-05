@@ -6,7 +6,9 @@ const authenticateUser = (req, res, next) => {
         next();
     }
     else {
-        res.render('login', { error: 'Unauthorized' });
+        // res.render('login', { error: 'Unauthorized' });
+        console.log(req.session.user);
+        res.send("i am David");
     }
 };
 exports.authenticateUser = authenticateUser;

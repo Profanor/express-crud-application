@@ -6,9 +6,12 @@ import path from 'path';
 import logger from 'morgan';
 import createError from 'http-errors';
 import cookieParser from 'cookie-parser';
-import sequelize from './database/database';
 import { Response, Request, NextFunction } from 'express';
-import Product from './models/Product';
+import initializeDatabase from './init-db';
+import passport from 'passport';
+import './models/User';
+import './models/Product';
+
 
 // Routes
 import index from './routes/index'
@@ -17,32 +20,14 @@ import productRoutes from './routes/productRoutes';
 import users from './routes/users';
 import login from './routes/login';
 import signup from './routes/signup';
+import profile from './routes/profile';
 
 const app = express();
 
-sequelize
-  .sync()
-  .then(()=>{
-  console.log('Connection to the database has been established successfully.')
-      
-    // Add your data insertion code here
-    return Product.create({
-        name: 'smart-watch',
-        image: 'sample-image-url',
-        brand: 'hryfine',
-        category: 'Men accessories',
-        description: 'a small portable watch',
-        price: 19.99,
-        countInStock: 10,
-        rating: 4,
-        numReviews: 15,
-      });
-    })
-    .then((newProduct) => {
-      console.log('Sample product inserted successfully:', newProduct);  
-})
-.catch((error)=>{
-  console.error('Unable to connect to the database:', error);
+// Initialize the database with sample data
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+  await initializeDatabase(req);
+  next();
 });
 
 const PORT = process.env.PORT || 3000; //reads and loads the port value from .env
@@ -64,6 +49,9 @@ const PORT = process.env.PORT || 3000; //reads and loads the port value from .en
       saveUninitialized: true,
   })
 );
+  //passport initialization
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   app.use(express.static(path.join(__dirname, 'public')));
 
@@ -74,6 +62,7 @@ const PORT = process.env.PORT || 3000; //reads and loads the port value from .en
   app.use('/', productRoutes); 
   app.use('/', login);
   app.use('/', signup);
+  app.use('/', profile);
 
   // catch 404 and forward to error handler
   app.use((req, res, next) => {

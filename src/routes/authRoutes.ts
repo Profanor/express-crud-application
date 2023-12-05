@@ -1,9 +1,8 @@
 //routes/authRoutes.js
-import { Response, Request } from 'express';
+import express, { Response, Request } from 'express';
 import User, { UserAttributes } from '../models/User';
 import bcrypt from 'bcrypt';
-import express from 'express';
- 
+
 const router = express.Router();
  
 // Function to simulate user authentication
@@ -23,6 +22,7 @@ interface AuthenticatedUser {
     fullname: string;
 }
  
+//login route
 router.post('/login', async (req: Request, res: Response) => {
   const { fullname, password } = req.body;
  

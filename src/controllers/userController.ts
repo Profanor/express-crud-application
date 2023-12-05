@@ -29,7 +29,7 @@ const getUserById = async (req: Request, res: Response) => {
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const { fullname, email, password, gender, phone, address } = req.body;
+    const { id, fullname, email, password, gender, phone, address } = req.body;
 
     // Validate that required fields are present
     if (!fullname || !email || !password) {
@@ -44,6 +44,7 @@ const createUser = async (req: Request, res: Response) => {
 
     // Create a new user
     const newUser = await userModel.create({
+      id,
       fullname,
       email,
       password,
@@ -62,7 +63,7 @@ const createUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
-    const { fullname, email, password, gender, phone, address } = req.body;
+    const { id, fullname, email, password, gender, phone, address } = req.body;
 
     // Validate that required fields are present
     if (!fullname || !email || !password) {
@@ -79,6 +80,7 @@ const updateUser = async (req: Request, res: Response) => {
 
     // Update the user
     await user.update({
+      id,
       fullname,
       email,
       password,

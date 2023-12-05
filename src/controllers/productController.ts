@@ -13,7 +13,7 @@ const getAllProducts = async (req: Request, res: Response) => {
 
 const addProduct = async (req: Request, res: Response) => {
   try {
-    const { id, name, image, brand, category, description, price, countInStock, rating, numReviews } = req.body;
+    const { id, name, userId, image, brand, category, description, price, countInStock, rating, numReviews } = req.body;
 
     console.log(req.body);
 
@@ -23,6 +23,7 @@ const addProduct = async (req: Request, res: Response) => {
     }
 
     const newProduct = await Product.create({ 
+      userId,
       name,
       image,
       brand,

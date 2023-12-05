@@ -5,4 +5,9 @@ body {
 
 a {
   color: #00B7FF;
+  text-decoration: none;
+}
+
+.signup-container h1 {
+  color: orange;
 }

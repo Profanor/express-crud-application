@@ -1,8 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../database/database'; 
+import User from './User';
 
 interface productAttributes {
-  id?: number;
+  id: number;
+  userId: number;
   name: string;
   image: string;
   brand: string;
@@ -14,12 +16,23 @@ interface productAttributes {
   numReviews: number;
 }
 
-export class Product extends Model<productAttributes> {}
+ class Product extends Model<productAttributes> {}
+
+ console.log('Product model declared');
 
  Product.init({
   id: {
-    type: DataTypes.STRING,
-    primaryKey: true
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    },
   },
   name: {
     type: DataTypes.STRING,
@@ -52,9 +65,17 @@ export class Product extends Model<productAttributes> {}
     type: DataTypes.INTEGER,
   }
  },
-  {
-    sequelize,
-    modelName: 'Product'
-  });
+ {
+  sequelize,
+  modelName: 'Product',
+}
+);
+
+console.log('Product model initialized');
+
+// Associations
+Product.belongsTo(User, { foreignKey: 'userId' });
+
+console.log('Product associations defined');
 
 export default Product;
