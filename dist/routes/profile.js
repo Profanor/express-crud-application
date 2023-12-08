@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-// import { authenticateUser } from '../middleware/authMiddleware';
+// import  authenticateUser from '../middleware/authMiddleware';
 const router = express_1.default.Router();
 // router.use(authenticateUser);
 router.get('/profile', (req, res) => {

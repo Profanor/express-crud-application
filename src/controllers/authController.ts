@@ -1,24 +1,33 @@
+require('dotenv').config();
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { Response, Request } from 'express';
 
+const maxAge = 1 * 24 * 60 * 60; //define maxAge globally
+
+// function to create a JWT token
+const createToken = (userId: number, fullname: string) => {
+  return jwt.sign({ userId, fullname }, process.env.JWT_SECRET || 'default_secret', {
+   expiresIn: maxAge
+ });
+};
 
 const signup = async (req: Request, res: Response) => {
   try {
     const { id, fullname, password, gender, phone, email, address } = req.body;
 
-    //check if the username already exists
+    // Check if the username already exists
     const existingUser = await User.findOne({ where: { fullname } });
 
     if (existingUser) {
       return res.status(400).json({ error: 'Username already exists' });
     }
 
-    //hash the password
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    //create a new user
+    // Create a new user
     const createdUser = await User.create({
       id,
       fullname,
@@ -29,6 +38,10 @@ const signup = async (req: Request, res: Response) => {
       address
     });
 
+    // Generate a JWT token using the createToken function
+    const token = createToken(createdUser.id, createdUser.fullname)
+    // Send the token in a cookie for subsequent requests
+    res.cookie('jwt', token);
     res.status(201).json({ success: true, user: createdUser });
   } catch (error) {
     console.error(error);
@@ -40,32 +53,32 @@ const login = async (req: Request, res: Response) => {
   try {
     const { fullname, password } = req.body;
 
-    //find the user by username
+    // Find the user by username
     const user = await User.findOne({ where: { fullname } });
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials'});
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
-let tempUser = user.toJSON()
 
-    //check if password is correct
-    const passwordMatch = await bcrypt.compare(password, tempUser.password);
-    
+    // Check if the password is correct
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid credentials'});
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
+    
+    //reuse the createToken function in the login
+    const token = createToken(user.id, user.fullname);
 
-    // Generate a JWT token (adjust the secret and expiration as needed)
-    const token = jwt.sign({ userId: tempUser.id }, 'qrt87563.fjf/[a-z]/', { expiresIn: '1h' });
-
-
-    //set user information in the session
+    // Set user information in the session
     req.session.user = {
-      id: tempUser.id,
-      fullname: tempUser.fullname,
+      id: user.id,
+      fullname: user.fullname,
     };
 
-    res.json({ success: true, user: req.session.user });
+    // send the token and user information in the response
+    res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+    res.status(201).json({ success: true, user: req.session.user, token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error during login' });

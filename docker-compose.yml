@@ -1,27 +1,20 @@
 version: '3'
+
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  # Node.js application
+  web:
+    image: davidson/appstart
     ports:
       - "3000:3000"
-    environment:
-      NODE_ENV: production
     depends_on:
       - db
-
-  db:
-    image: mysql:latest
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: database_development
-      MYSQL_USER: root
-      MYSQL_PASSWORD: null
+      NODE_ENV: "production"  # Set the environment to production
+    volumes:
+      - ./app:/app  # Mount a volume to share application code between host and container
 
-volumes:
-  mysql-data:
+  # SQLite database
+  db:
+    image: sqlite:latest
+    volumes:
+      - ./data:/data  # Mount a volume to persist the SQLite database file

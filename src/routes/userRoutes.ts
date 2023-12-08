@@ -1,6 +1,6 @@
 import express from 'express';
 import userController from '../controllers/userController';
-import { authenticateUser } from '../middleware/authMiddleware';
+// import authenticateUser from '../middleware/authMiddleware';
 
 const router = express.Router();
 
@@ -9,7 +9,7 @@ router.get('/', userController.getAllUsers);
 router.get('/:id', userController.getUserById);
 
 // Protected routes (require authentication)
-router.use(authenticateUser); // Apply authentication middleware to all routes below
+// router.use(authenticateUser); 
 
 //define protected routes
 router.post('/',  userController.createUser);

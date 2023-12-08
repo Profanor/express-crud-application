@@ -14,13 +14,16 @@ router.post('/login', async (req, res) => {
     try {
         //extract form data from the req body
         const { fullname, password } = req.body;
+        console.log(fullname, password);
         //perform login logic
         const user = await User_1.default.findOne({ where: { fullname } });
+        console.log({ user });
         if (user && bcrypt_1.default.compareSync(password, user.password)) {
             // Exclude the password field in the returned user
             const { password: _, ...userWithoutPassword } = user.toJSON();
             //redirect to user profile
             res.redirect('/profile');
+            console.log('logged in success');
         }
         else {
             res.render('login', { title: 'Login', error: 'Invalid credentials' });

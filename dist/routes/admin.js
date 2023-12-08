@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const Product_1 = __importDefault(require("../models/Product"));
-const authMiddleware_1 = require("../middleware/authMiddleware");
+// import  authenticateUser from '../middleware/authMiddleware';
 const router = express_1.default.Router();
-router.use(authMiddleware_1.authenticateUser);
+// router.use(authenticateUser);
 //display all products created by the logged-in user
 router.get('/admin/products', async (req, res) => {
     try {

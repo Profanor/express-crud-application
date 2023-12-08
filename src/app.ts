@@ -8,21 +8,20 @@ import createError from 'http-errors';
 import cookieParser from 'cookie-parser';
 import { Response, Request, NextFunction } from 'express';
 import initializeDatabase from './init-db';
-import passport from 'passport';
 import './models/User';
 import './models/Product';
 
+const app = express();
 
 // Routes
 import index from './routes/index'
 import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
-import users from './routes/users';
+import users from './routes/userRoutes';
 import login from './routes/login';
 import signup from './routes/signup';
 import profile from './routes/profile';
 
-const app = express();
 
 // Initialize the database with sample data
 app.use(async (req: Request, res: Response, next: NextFunction) => {
@@ -34,6 +33,7 @@ const PORT = process.env.PORT || 3000; //reads and loads the port value from .en
 
   // view engine setup
   app.set('views', path.join(__dirname, 'views'));
+  app.use(express.static(path.join(__dirname, 'public')));
   app.set('view engine', 'pug');
 
   app.use(logger('dev'));
@@ -49,17 +49,12 @@ const PORT = process.env.PORT || 3000; //reads and loads the port value from .en
       saveUninitialized: true,
   })
 );
-  //passport initialization
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  app.use(express.static(path.join(__dirname, 'public')));
 
   // use your routes
   app.use('/', index);
-  app.use('/authRoutes', authRoutes);
+  app.use('/auth', authRoutes);
   app.use('/users', users);
-  app.use('/', productRoutes); 
+  app.use('/products', productRoutes); 
   app.use('/', login);
   app.use('/', signup);
   app.use('/', profile);

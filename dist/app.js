@@ -11,18 +11,17 @@ const morgan_1 = __importDefault(require("morgan"));
 const http_errors_1 = __importDefault(require("http-errors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const init_db_1 = __importDefault(require("./init-db"));
-const passport_1 = __importDefault(require("passport"));
 require("./models/User");
 require("./models/Product");
+const app = (0, express_1.default)();
 // Routes
 const index_1 = __importDefault(require("./routes/index"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
-const users_1 = __importDefault(require("./routes/users"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const login_1 = __importDefault(require("./routes/login"));
 const signup_1 = __importDefault(require("./routes/signup"));
 const profile_1 = __importDefault(require("./routes/profile"));
-const app = (0, express_1.default)();
 // Initialize the database with sample data
 app.use(async (req, res, next) => {
     await (0, init_db_1.default)(req);
@@ -31,6 +30,7 @@ app.use(async (req, res, next) => {
 const PORT = process.env.PORT || 3000; //reads and loads the port value from .env
 // view engine setup
 app.set('views', path_1.default.join(__dirname, 'views'));
+app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.set('view engine', 'pug');
 app.use((0, morgan_1.default)('dev'));
 app.use(express_1.default.json());
@@ -42,15 +42,11 @@ app.use((0, express_session_1.default)({
     resave: false,
     saveUninitialized: true,
 }));
-//passport initialization
-app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
-app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 // use your routes
 app.use('/', index_1.default);
-app.use('/authRoutes', authRoutes_1.default);
-app.use('/users', users_1.default);
-app.use('/', productRoutes_1.default);
+app.use('/auth', authRoutes_1.default);
+app.use('/users', userRoutes_1.default);
+app.use('/products', productRoutes_1.default);
 app.use('/', login_1.default);
 app.use('/', signup_1.default);
 app.use('/', profile_1.default);

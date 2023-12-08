@@ -1,5 +1,6 @@
 import express, { Response, Request } from 'express';
-// import { authenticateUser } from '../middleware/authMiddleware';
+import User from '../models/User'
+// import  authenticateUser from '../middleware/authMiddleware';
 
 
 const router = express.Router();
@@ -7,7 +8,7 @@ const router = express.Router();
 
 
 router.get('/profile', (req: Request, res: Response) => {
-    const user = req.user;
+    const user = req.user as User | undefined;
     res.render('profile', { title: 'My Profile' });
   });
 

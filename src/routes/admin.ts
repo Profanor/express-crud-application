@@ -1,10 +1,10 @@
 import express, { Response, Request } from 'express';
 import Product from '../models/Product';
-import { authenticateUser } from '../middleware/authMiddleware';
+// import  authenticateUser from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-router.use(authenticateUser);
+// router.use(authenticateUser);
 
 //display all products created by the logged-in user
 router.get('/admin/products', async (req: Request, res: Response) => {

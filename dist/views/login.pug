@@ -1,12 +1,15 @@
 extends layout
 
 block content
-  h1 Login
-  form(action='/login', method='post')
-    label(for='fullname') Full Name:
-    input(type='text', name='fullname', required)
-    
-    label(for='password') Password:
-    input(type='password', name='password', required)
-    
-    button(type='submit') Login
+  .container(style="text-align: center; margin-top: 50px; width: 50%; margin: 0px auto")
+    h2(style="color: #333;") Log In
+    form(action="/login", method="post", style="margin-top: 20px;")
+      label(for="fullname", style="display: block; margin-bottom: 8px;") Full Name:
+      input(type="text", name="fullname", required, style="width: 100%; padding: 8px; margin-bottom: 16px;")
+
+      label(for="password", style="display: block; margin-bottom: 8px;") Password:
+      input(type="password", name="password", required, style="width: 100%; padding: 8px; margin-bottom: 16px;")
+
+      button(type="submit", style="background-color: #28A745; color: #fff; padding: 10px 20px; border: none; cursor: pointer;") Log In
+    p(style="margin-top: 20px;") Don't have an account? 
+      a(href="/signup", style="color: #28A745;") Sign Up

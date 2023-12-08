@@ -3,20 +3,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require('dotenv').config();
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
+const maxAge = 1 * 24 * 60 * 60; //define maxAge globally
+// function to create a JWT token
+const createToken = (userId, fullname) => {
+    return jsonwebtoken_1.default.sign({ userId, fullname }, process.env.JWT_SECRET || 'default_secret', {
+        expiresIn: maxAge
+    });
+};
 const signup = async (req, res) => {
     try {
         const { id, fullname, password, gender, phone, email, address } = req.body;
-        //check if the username already exists
+        // Check if the username already exists
         const existingUser = await User_1.default.findOne({ where: { fullname } });
         if (existingUser) {
             return res.status(400).json({ error: 'Username already exists' });
         }
-        //hash the password
+        // Hash the password
         const hashedPassword = await bcrypt_1.default.hash(password, 10);
-        //create a new user
+        // Create a new user
         const createdUser = await User_1.default.create({
             id,
             fullname,
@@ -26,6 +34,10 @@ const signup = async (req, res) => {
             email,
             address
         });
+        // Generate a JWT token using the createToken function
+        const token = createToken(createdUser.id, createdUser.fullname);
+        // Send the token in a cookie for subsequent requests
+        res.cookie('jwt', token);
         res.status(201).json({ success: true, user: createdUser });
     }
     catch (error) {
@@ -36,25 +48,26 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { fullname, password } = req.body;
-        //find the user by username
+        // Find the user by username
         const user = await User_1.default.findOne({ where: { fullname } });
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        let tempUser = user.toJSON();
-        //check if password is correct
-        const passwordMatch = await bcrypt_1.default.compare(password, tempUser.password);
+        // Check if the password is correct
+        const passwordMatch = await bcrypt_1.default.compare(password, user.password);
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        // Generate a JWT token (adjust the secret and expiration as needed)
-        const token = jsonwebtoken_1.default.sign({ userId: tempUser.id }, 'qrt87563.fjf/[a-z]/', { expiresIn: '1h' });
-        //set user information in the session
+        //reuse the createToken function in the login
+        const token = createToken(user.id, user.fullname);
+        // Set user information in the session
         req.session.user = {
-            id: tempUser.id,
-            fullname: tempUser.fullname,
+            id: user.id,
+            fullname: user.fullname,
         };
-        res.json({ success: true, user: req.session.user });
+        // send the token and user information in the response
+        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.status(201).json({ success: true, user: req.session.user, token });
     }
     catch (error) {
         console.error(error);

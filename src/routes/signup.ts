@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import User from '../models/User';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
@@ -13,13 +14,13 @@ router.post('/signup', async (req: Request, res: Response)=> {
   try{
   //extract form data from the request body
   const { id, fullname, email, password, gender, phone, address } = req.body;
-
+    const hashedPassword = bcrypt.hashSync(password, 10)
   //perform signup logic i.e save user to a database
   const newUser = await User.create({
     id,
     fullname,
     email, 
-    password, 
+    password: hashedPassword, 
     gender, 
     phone, 
     address,
