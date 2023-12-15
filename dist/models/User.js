@@ -21,15 +21,15 @@ User.init({
     email: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
-        unique: true, // Assuming email should be unique
+        unique: true,
     },
     password: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
     gender: {
-        type: sequelize_1.DataTypes.STRING, // You might want to use ENUM for gender
-        allowNull: true, // Update based on your requirements
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
     },
     phone: {
         type: sequelize_1.DataTypes.STRING,

@@ -4,7 +4,7 @@ import { Sequelize } from 'sequelize';
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: 'database.sqlite',
-  logging: console.log,
+  logging: false,
 });
 
 console.log('Sequelize instance created');

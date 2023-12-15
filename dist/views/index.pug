@@ -1,21 +1,51 @@
-extends layout
+head
+  style(type='text/css').
+    body {
+      background-color: black;
+      color: white;
+      font-family: 'Arial', sans-serif; 
+    }
+
+    @media screen and (min-width: 600px) {
+      .hero-container {
+        padding: 10px;
+        position: relative;
+      }
+      .product-container {
+        padding: 10px;
+      }
+      .product-card {
+        margin-bottom: 10px;
+      }
+      .v {
+        height: 1000px; 
+        width: 100%;
+      }
+      .signup-login-links {
+        padding: 20px 0;
+      }
+    }
 
 block content
-  .hero-container
-    h1(style="color: #333; text-align: center; margin-top: 50px; font-size: 36px;") Welcome to IzzShopping
+  .hero-container(style="background: linear-gradient(to bottom, #FFD700, #FF8C00); text-align: center;")
+    h1(style="color: #333; margin-top: 50px; font-size: 36px; display: inline-block;") Welcome to IzzShopping
     p(style="text-align: center; color: #666; margin-top: 20px; font-size: 18px;") Discover Amazing Products
+    .signup-login-links(style="text-align: center; margin-top: 20px; display: inline-block;")
+      a(href="/signup", style="background-color: #28A745; color: #fff; padding: 12px 24px; margin-right: 20px; text-decoration: none; border-radius: 4px; font-size: 16px;") Sign Up
+      a(href="/login", style="background-color: #007BFF; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-size: 16px;") Log In
 
-  .product-container
+  .product-container(style="background: #ffff; padding: 20px;")
     each product in featuredProducts || []
-      .product-card
-        img(src=`/images/${product.image}`, alt=product.name, style="width: 100%; border-radius: 8px 8px 0 0;")
-        .product-info
-          h3(style="color: #333; margin: 10px 0;") #{product.name}
-          p(style="color: #666; margin: 10px 0;") Category: #{product.category}
-          p(style="color: #666; margin: 10px 0;") Price: $#{product.price}
+      .product-card(style="background: black; border-radius: 8px; margin-bottom: 20px;")
+        div(style=`background-image: url('${product.imageUrl}'); background-size: contain; background-repeat: no-repeat; background-position: center; height: 600px; width: 100%; border-radius: 8px 8px 0 0;`)
+          
+        .product-info(style="padding: 16px;")
+          h3(style="color: gold; margin: 10px 0; font-family: Arial;") #{product.name}
+          p(style="color: white; margin: 10px 0;font-family: Arial;") Category: #{product.category}
+          p(style="color: white; margin: 10px 0; font-weight: 800;") Price: $#{product.price}
           a(href=`/product/${product.id}`, style="background-color: #007BFF; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px;") View Details
 
-  .signup-login-links(style="text-align: center; margin-top: 50px;")
+  .signup-login-links(style="background: #f8f9fa; text-align: center; padding: 30px 0; margin-top: 50px;")
     p(style="color: #666; font-size: 18px;") Join us now and explore the world of shopping!
     a(href="/signup", style="background-color: #28A745; color: #fff; padding: 12px 24px; margin-right: 20px; text-decoration: none; border-radius: 4px; display: inline-block; font-size: 16px;") Sign Up
     a(href="/login", style="background-color: #007BFF; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; font-size: 16px;") Log In

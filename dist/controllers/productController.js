@@ -29,27 +29,29 @@ const getProductsById = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-const addProduct = async (req, res) => {
+const addProduct = async (productData, req, res) => {
     try {
-        const { id, name, userId, image, brand, category, description, price, countInStock, rating, numReviews } = req.body;
-        console.log(req.body);
-        // Validate that required fields are present
-        if (!name || !price || !countInStock) {
+        console.log('Received product data:', productData);
+        //Validate that required fields are present
+        if (!productData.productName || !productData.productPrice || !productData.productCountInStock) {
             return res.status(400).json({ error: 'Name, price, and countInStock are required' });
         }
-        const newProduct = await Product_1.default.create({
-            userId,
-            name,
-            image,
-            brand,
-            category,
-            description,
-            price,
-            countInStock,
-            rating,
-            numReviews,
-            id,
-        });
+        // Log the parsed values before creating the product
+        const parsedProductData = {
+            userId: productData.userId,
+            name: productData.productName,
+            image: productData.productImage,
+            brand: productData.productBrand,
+            category: productData.productCategory,
+            description: productData.productDescription,
+            price: parseFloat(productData.productPrice),
+            countInStock: parseInt(productData.productCountInStock),
+            rating: parseFloat(productData.productRating),
+            numReviews: parseInt(productData.productNumReviews),
+            id: productData.id,
+        };
+        console.log('Parsed product data:', parsedProductData);
+        const newProduct = await Product_1.default.create(parsedProductData);
         res.status(201).json({ success: true, product: newProduct });
     }
     catch (error) {

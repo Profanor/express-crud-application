@@ -14,6 +14,7 @@ const getAllProducts = async (req: Request, res: Response) => {
 const getProductsById = async (req: Request, res: Response) => {
   try {
     const productId = req.params.id;
+    
      //find product by ID in the database
      const product = await productModel.findByPk(productId);
      if (!product) {
@@ -26,31 +27,33 @@ const getProductsById = async (req: Request, res: Response) => {
 }
 };
 
-
-const addProduct = async (req: Request, res: Response) => {
+const addProduct = async (productData: any, req: Request, res: Response) => {
   try {
-    const { id, name, userId, image, brand, category, description, price, countInStock, rating, numReviews } = req.body;
+    console.log('Received product data:', productData);
 
-    console.log(req.body);
-
-    // Validate that required fields are present
-    if (!name || !price || !countInStock) {
+    //Validate that required fields are present
+    if (!productData.productName || !productData.productPrice || !productData.productCountInStock) {
       return res.status(400).json({ error: 'Name, price, and countInStock are required' });
     }
 
-    const newProduct = await productModel.create({ 
-      userId,
-      name,
-      image,
-      brand,
-      category,
-      description,
-      price,
-      countInStock,
-      rating,
-      numReviews,
-      id,
-    });
+    // Log the parsed values before creating the product
+    const parsedProductData = {
+      userId: productData.userId,
+      name: productData.productName,
+      image: productData.productImage,
+      brand: productData.productBrand,
+      category: productData.productCategory,
+      description: productData.productDescription,
+      price: parseFloat(productData.productPrice),
+      countInStock: parseInt(productData.productCountInStock),
+      rating: parseFloat(productData.productRating),
+      numReviews: parseInt(productData.productNumReviews),
+      id: productData.id,
+    };
+
+    console.log('Parsed product data:', parsedProductData);
+
+    const newProduct = await productModel.create(parsedProductData);
 
     res.status(201).json({ success: true, product: newProduct });
   } catch (error) {

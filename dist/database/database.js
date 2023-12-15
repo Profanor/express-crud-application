@@ -5,7 +5,7 @@ const sequelize_1 = require("sequelize");
 const sequelize = new sequelize_1.Sequelize({
     dialect: 'sqlite',
     storage: 'database.sqlite',
-    logging: console.log,
+    logging: false,
 });
 console.log('Sequelize instance created');
 exports.default = sequelize;

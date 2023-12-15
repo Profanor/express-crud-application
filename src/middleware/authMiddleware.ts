@@ -1,30 +1,68 @@
-// import { Request, Response, NextFunction } from 'express';
-// import jwt from 'jsonwebtoken';
-// import cookieParser from 'cookie-parser';
-// import express from 'express'
+import { Request, Response, NextFunction } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
-// const app = express();
-// app.use(cookieParser());
+// Define the type for the decoded payload
+interface DecodedToken extends JwtPayload {
+  userId: number;
+  email: string;
+  role: string;
+}
 
-//  const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
-//   // Check if the token is present in the request headers or cookies
-//   const token = req.headers.authorization || req.cookies.token;
+// Middleware to authenticate requests using JWT
+const authenticateJWT = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = req.cookies.jwt;
+  console.log('JWT Token:', token);
+  
+  if (!token) {
+    console.log('No token found.');
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
-//   if (!token) {
-//     // Token is not present, send unauthorized response
-//     return res.status(401).json({ error: 'Unauthorized' });
-//   }
+  jwt.verify(
+    token,
+    process.env.JWT_SECRET || 'default_secret',
+    (err: any, decoded: Express.User | undefined) => {
+      if (err || !decoded) {
+        console.log('Invalid token:', err);
+        res.clearCookie('jwt');
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
 
-//   try {
-//     // Verify the token using your secret key (replace 'your_secret_key' with a strong secret)
-//     const decoded = jwt.verify(token, 'your_secret_key') as { userId: number; fullname: string };
+      console.log('Valid token. Decoded:', decoded);
+      req.user = decoded; 
+      next();
+    }
+  );
+};
 
-//     // Attach the decoded user information to the request for further use
-//     req.user = decoded;
-//     next();
-//   } catch (error) {
-//     // Token verification failed, send unauthorized response
-//     return res.status(401).json({ error: 'Unauthorized' });
-//   }
-// };
-// export default authenticateUser;
+// Middleware for authorization checks using session data
+export const authorize = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.session.user;
+
+  if (!user) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  // Perform authorization checks based on the user's information in the session
+  if (user.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden. Admins only.' });
+  }
+
+  const userIdFromSession = req.session.user.id;
+  const productIdFromParams = req.params.productId; // Assuming you have productId in the route params
+
+  if (userIdFromSession !== productIdFromParams) {
+    return res.status(403).json({ error: 'Forbidden. You do not own this resource.' });
+  }
+  next();
+};
+
+export default { authenticateJWT, authorize };

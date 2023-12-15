@@ -70,7 +70,6 @@ interface productAttributes {
   modelName: 'Product',
 }
 );
-
 console.log('Product model initialized');
 
 // Associations

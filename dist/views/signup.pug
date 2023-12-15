@@ -4,24 +4,31 @@ block content
   .container(style="text-align: center; margin-top: 50px; width: 50%; margin: 0px auto;")
     h2(style="color: #333;") Sign Up
     form(action="/signup", method="post", style="margin-top: 20px;")
-      label(for="fullname", style="display: block; margin-bottom: 8px;") Full Name:
-      input(type="text", name="fullname", required, style="width: 100%; padding: 8px; margin-bottom: 16px;")
-
-      label(for="email", style="display: block; margin-bottom: 8px;") Email:
-      input(type="email", name="email", required, style="width: 100%; padding: 8px; margin-bottom: 16px;")
-
-      label(for="password", style="display: block; margin-bottom: 8px;") Password:
-      input(type="password", name="password", required, style="width: 100%; padding: 8px; margin-bottom: 16px;")
-
-      label(for="gender", style="display: block; margin-bottom: 8px;") Gender:
-      input(type="text", name="gender", style="width: 100%; padding: 8px; margin-bottom: 16px;")
-
-      label(for="phone", style="display: block; margin-bottom: 8px;") Phone:
-      input(type="text", name="phone", style="width: 100%; padding: 8px; margin-bottom: 16px;")
-
-      label(for="address", style="display: block; margin-bottom: 8px;") Address:
-      input(type="text", name="address", style="width: 100%; padding: 8px; margin-bottom: 16px;")
-
+      .form-group
+        label(for="fullname", style="display: block; margin-bottom: 8px;") Full Name:
+        input(type="text", name="fullname", required, style="width: 80%; max-width: 300px; padding: 8px; margin-bottom: 16px;")
+      
+      .form-group
+        label(for="email", style="display: block; margin-bottom: 8px;") Email:
+        input(type="email", name="email", required, style="width: 80%; max-width: 300px; padding: 8px; margin-bottom: 16px;")
+      
+      .form-group
+        label(for="password", style="display: block; margin-bottom: 8px;") Password:
+        input(type="password", name="password", required, style="width: 80%; max-width: 300px; padding: 8px; margin-bottom: 16px;")
+      
+      .form-group
+        label(for="gender", style="display: block; margin-bottom: 8px;") Gender:
+        input(type="text", name="gender", style="width: 80%; max-width: 300px; padding: 8px; margin-bottom: 16px;")
+      
+      .form-group
+        label(for="phone", style="display: block; margin-bottom: 8px;") Phone:
+        input(type="text", name="phone", style="width: 80%; max-width: 300px; padding: 8px; margin-bottom: 16px;")
+      
+      .form-group
+        label(for="address", style="display: block; margin-bottom: 8px;") Address:
+        input(type="text", name="address", style="width: 80%; max-width: 300px; padding: 8px; margin-bottom: 16px;")
+      
       button(type="submit", style="background-color: #007BFF; color: #fff; padding: 10px 20px; border: none; cursor: pointer;") Sign Up
+    
     p(style="margin-top: 20px;") Already have an account? 
       a(href="/login", style="color: #007BFF;") Log In

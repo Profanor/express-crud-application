@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1 Admin Dashboard
+
+  // Display user information
+  if users.length > 0
+    ul
+      each user in users
+        li
+          strong Full Name:
+          span= user.fullname
+          br
+          strong Email:
+          span= user.email
+          // Add more user details as needed
+  else
+    p No users to display
+

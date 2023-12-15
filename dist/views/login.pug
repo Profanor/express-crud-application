@@ -1,15 +1,31 @@
 extends layout
 
 block content
-  .container(style="text-align: center; margin-top: 50px; width: 50%; margin: 0px auto")
-    h2(style="color: #333;") Log In
-    form(action="/login", method="post", style="margin-top: 20px;")
-      label(for="fullname", style="display: block; margin-bottom: 8px;") Full Name:
-      input(type="text", name="fullname", required, style="width: 100%; padding: 8px; margin-bottom: 16px;")
+  .container(style="text-align: center; width: 50%; margin: 50px auto; background-color: black; color: white; padding: 20px;")
+    h2(style="color: white;") Log In
+    .login-form(style="margin-top: 20px;")
+      form(action="/login", method="post")
+        label(for="email", style="display: block; margin-bottom: 8px;") Email:
+        input(type="email", name="email", required, style="width: 80%; padding: 10px; margin-bottom: 16px;")
 
-      label(for="password", style="display: block; margin-bottom: 8px;") Password:
-      input(type="password", name="password", required, style="width: 100%; padding: 8px; margin-bottom: 16px;")
+        label(for="password", style="display: block; margin-bottom: 8px;") Password:
+        input(type="password", name="password", required, style="width: 80%; padding: 10px; margin-bottom: 16px;")
 
-      button(type="submit", style="background-color: #28A745; color: #fff; padding: 10px 20px; border: none; cursor: pointer;") Log In
-    p(style="margin-top: 20px;") Don't have an account? 
-      a(href="/signup", style="color: #28A745;") Sign Up
+        button(type="submit", style="background-color: #28A745; color: #fff; padding: 10px 20px; border: none; cursor: pointer; margin-top: 10px;") Log In
+
+      p(style="margin-top: 20px;") Don't have an account? 
+        a(href="/signup", style="color: #28A745;") Sign Up
+
+      // Media query for larger screens
+      style.
+        @media screen and (min-width: 768px) {
+          .login-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+
+          input {
+            width: 100%;
+          }
+        }

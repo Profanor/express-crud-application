@@ -14,40 +14,44 @@ const init_db_1 = __importDefault(require("./init-db"));
 require("./models/User");
 require("./models/Product");
 const app = (0, express_1.default)();
-// Routes
-const index_1 = __importDefault(require("./routes/index"));
-const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
-const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
-const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
-const login_1 = __importDefault(require("./routes/login"));
-const signup_1 = __importDefault(require("./routes/signup"));
-const profile_1 = __importDefault(require("./routes/profile"));
-// Initialize the database with sample data
+//Middleware to Initialize the database with sample data
 app.use(async (req, res, next) => {
     await (0, init_db_1.default)(req);
     next();
 });
-const PORT = process.env.PORT || 3000; //reads and loads the port value from .env
-// view engine setup
-app.set('views', path_1.default.join(__dirname, 'views'));
-app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
-app.set('view engine', 'pug');
-app.use((0, morgan_1.default)('dev'));
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: false }));
-app.use((0, cookie_parser_1.default)());
 // use the session middleware
 app.use((0, express_session_1.default)({
     secret: process.env.SESSION_SECRET || 'default_secret',
     resave: false,
     saveUninitialized: true,
 }));
+// view engine setup
+app.set('views', path_1.default.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
+//other middleware 
+app.use((0, morgan_1.default)('dev'));
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, cookie_parser_1.default)());
+// Routes
+const index_1 = __importDefault(require("./routes/index"));
+const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const signup_1 = __importDefault(require("./routes/signup"));
+const login_1 = __importDefault(require("./routes/login"));
+const profile_1 = __importDefault(require("./routes/profile"));
+const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
+const logout_1 = __importDefault(require("./routes/logout"));
 // use your routes
 app.use('/', index_1.default);
 app.use('/auth', authRoutes_1.default);
+app.use('/', adminRoutes_1.default);
 app.use('/users', userRoutes_1.default);
 app.use('/products', productRoutes_1.default);
 app.use('/', login_1.default);
+app.use('/', logout_1.default);
 app.use('/', signup_1.default);
 app.use('/', profile_1.default);
 // catch 404 and forward to error handler

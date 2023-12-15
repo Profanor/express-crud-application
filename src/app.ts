@@ -13,52 +13,56 @@ import './models/Product';
 
 const app = express();
 
-// Routes
-import index from './routes/index'
-import authRoutes from './routes/authRoutes';
-import productRoutes from './routes/productRoutes';
-import users from './routes/userRoutes';
-import login from './routes/login';
-import signup from './routes/signup';
-import profile from './routes/profile';
-
-
-// Initialize the database with sample data
+//Middleware to Initialize the database with sample data
 app.use(async (req: Request, res: Response, next: NextFunction) => {
   await initializeDatabase(req);
   next();
 });
 
-const PORT = process.env.PORT || 3000; //reads and loads the port value from .env
+ // use the session middleware
+ app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'default_secret',
+    resave: false,
+    saveUninitialized: true,
+})
+);
 
   // view engine setup
   app.set('views', path.join(__dirname, 'views'));
-  app.use(express.static(path.join(__dirname, 'public')));
   app.set('view engine', 'pug');
+  app.use(express.static(path.join(__dirname, 'public')));
 
+  //other middleware 
   app.use(logger('dev'));
   app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
+  app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
-  // use the session middleware
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET || 'default_secret',
-      resave: false,
-      saveUninitialized: true,
-  })
-);
+
+  // Routes
+  import index from './routes/index'
+  import authRoutes from './routes/authRoutes';
+  import productRoutes from './routes/productRoutes';
+  import users from './routes/userRoutes';
+  import signup from './routes/signup';
+  import login from './routes/login';
+  import profile from './routes/profile';
+  import adminRoutes from './routes/adminRoutes';
+  import logout from './routes/logout';
 
   // use your routes
   app.use('/', index);
   app.use('/auth', authRoutes);
+  app.use('/', adminRoutes);
   app.use('/users', users);
   app.use('/products', productRoutes); 
   app.use('/', login);
+  app.use('/', logout);
   app.use('/', signup);
   app.use('/', profile);
-
+  
+ 
   // catch 404 and forward to error handler
   app.use((req, res, next) => {
     next(createError(404));

@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const productController_1 = __importDefault(require("../controllers/productController"));
+const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware"));
 const router = express_1.default.Router();
+router.use(authMiddleware_1.default.authenticateJWT);
 router.get('/', productController_1.default.getAllProducts);
 router.get('/:id', productController_1.default.getProductsById);
 router.post('/', productController_1.default.addProduct);
-router.post('/:id', productController_1.default.updateProduct);
-router.delete('/:id', productController_1.default.deleteProduct);
+router.post('/:id', authMiddleware_1.default.authorize, productController_1.default.updateProduct);
+router.delete('/:id', authMiddleware_1.default.authorize, productController_1.default.deleteProduct);
 exports.default = router;

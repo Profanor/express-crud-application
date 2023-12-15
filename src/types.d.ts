@@ -1,6 +1,5 @@
 // typings/express-session.d.ts
 import 'express-session';
-import { AuthenticatedUser } from './routes/authRoutes'; 
 
 declare module 'express-session' {
   interface SessionData {

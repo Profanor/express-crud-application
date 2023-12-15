@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../database/database'; 
+import Product from './Product';
 
 interface UserAttributes {
   id: number;
@@ -36,15 +37,15 @@ console.log('User model declared');
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true, // Assuming email should be unique
+      unique: true, 
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     gender: {
-      type: DataTypes.STRING, // You might want to use ENUM for gender
-      allowNull: true, // Update based on your requirements
+      type: DataTypes.STRING, 
+      allowNull: true, 
     },
     phone: {
       type: DataTypes.STRING,

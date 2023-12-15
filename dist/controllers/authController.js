@@ -17,7 +17,7 @@ const createToken = (userId, fullname) => {
 const signup = async (req, res) => {
     try {
         const { id, fullname, password, gender, phone, email, address } = req.body;
-        // Check if the username already exists
+        // Check if the email already exists
         const existingUser = await User_1.default.findOne({ where: { fullname } });
         if (existingUser) {
             return res.status(400).json({ error: 'Username already exists' });
@@ -35,21 +35,22 @@ const signup = async (req, res) => {
             address
         });
         // Generate a JWT token using the createToken function
-        const token = createToken(createdUser.id, createdUser.fullname);
+        // const token = createToken(createdUser.id, createdUser.email)
         // Send the token in a cookie for subsequent requests
-        res.cookie('jwt', token);
-        res.status(201).json({ success: true, user: createdUser });
+        // res.cookie('jwt', token);
+        res.status(201).json({ success: 'User registered successfully', user: createdUser });
     }
     catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error during signup' });
     }
 };
+//this is where i had redirect issues especially in session storage
 const login = async (req, res) => {
     try {
-        const { fullname, password } = req.body;
-        // Find the user by username
-        const user = await User_1.default.findOne({ where: { fullname } });
+        const { email, password } = req.body;
+        // Find the user by email
+        const user = await User_1.default.findOne({ where: { email } });
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -59,14 +60,14 @@ const login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
         //reuse the createToken function in the login
-        const token = createToken(user.id, user.fullname);
+        const token = createToken(user.id, user.email);
         // Set user information in the session
         req.session.user = {
             id: user.id,
-            fullname: user.fullname,
+            email: user.email,
         };
         // send the token and user information in the response
-        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(201).json({ success: true, user: req.session.user, token });
     }
     catch (error) {
