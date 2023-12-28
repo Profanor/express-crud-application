@@ -8,6 +8,7 @@ interface DecodedToken extends JwtPayload {
   role: string;
 }
 
+
 // Middleware to authenticate requests using JWT
 const authenticateJWT = (
   req: Request,

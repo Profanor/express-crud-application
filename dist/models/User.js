@@ -4,15 +4,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
-const database_1 = __importDefault(require("../database/database"));
+const sequelize_2 = __importDefault(require("../utils/sequelize"));
+const Product_1 = __importDefault(require("./Product"));
 class User extends sequelize_1.Model {
+    static associate() {
+        User.hasMany(Product_1.default, { foreignKey: 'userId', as: 'products' });
+    }
 }
-console.log('User model declared');
 User.init({
     id: {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        unique: true,
     },
     fullname: {
         type: sequelize_1.DataTypes.STRING,
@@ -40,8 +44,8 @@ User.init({
         allowNull: true,
     }
 }, {
-    sequelize: database_1.default,
+    sequelize: sequelize_2.default,
     modelName: 'User',
 });
-console.log('User model initialized');
+User.associate();
 exports.default = User;

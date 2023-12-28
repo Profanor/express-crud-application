@@ -1,23 +1,16 @@
 import express, { Response, Request } from 'express';
-import Product from '../models/Product';
+import User from '../models/User'; // Assuming you have a User model
 
 const router = express.Router();
 
-// Display all products created by the logged-in user
+// Display all users registered on the eCommerce application
 router.get('/adminRoutes', async (req: Request, res: Response) => {
     try {
-        const userId = req.session.user.id;
-        if (!userId) {
-            // Redirect to login or handle the case where the user is not authenticated
-            return res.redirect('/login');
-        }
+        const users = await User.findAll(); // Retrieve all users
 
-        // Assuming you have a proper association between User and Product models
-        const userProducts = await Product.findAll({ where: { userId } });
-
-        res.render('admin', { title: 'Admin Dashboard', products: userProducts });
+        res.render('admin', { title: 'Admin Dashboard', users });
     } catch (error) {
-        console.error('Error fetching user products:', error);
+        console.error('Error fetching users:', error);
         res.render('error', { error: 'Internal server error' });
     }
 });

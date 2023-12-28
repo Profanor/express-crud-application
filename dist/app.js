@@ -3,21 +3,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require('dotenv').config();
 const express_1 = __importDefault(require("express"));
-const express_session_1 = __importDefault(require("express-session"));
-const path_1 = __importDefault(require("path"));
-const morgan_1 = __importDefault(require("morgan"));
 const http_errors_1 = __importDefault(require("http-errors"));
+const path_1 = __importDefault(require("path"));
+const express_session_1 = __importDefault(require("express-session"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const init_db_1 = __importDefault(require("./init-db"));
-require("./models/User");
-require("./models/Product");
+const morgan_1 = __importDefault(require("morgan"));
+const User_1 = __importDefault(require("./models/User"));
+const Product_1 = __importDefault(require("./models/Product"));
 const app = (0, express_1.default)();
-//Middleware to Initialize the database with sample data
-app.use(async (req, res, next) => {
-    await (0, init_db_1.default)(req);
-    next();
+User_1.default.sync({ alter: true })
+    .then(() => {
+    return Product_1.default.sync({ alter: true });
+})
+    .then(() => {
+    console.log('Models synced successfully');
+})
+    .catch((error) => {
+    console.error('Error syncing models:', error);
 });
 // use the session middleware
 app.use((0, express_session_1.default)({

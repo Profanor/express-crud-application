@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../database/database'; 
+import sequelize from '../utils/sequelize';
 import Product from './Product';
 
 interface UserAttributes {
@@ -20,8 +20,11 @@ interface UserAttributes {
   public gender!: string;
   public phone!: string;
   public address!: string;
+
+  static associate() {
+    User.hasMany(Product, { foreignKey: 'userId', as: 'products' });
+   }
 }
-console.log('User model declared');
 
  User.init(
   { 
@@ -29,6 +32,7 @@ console.log('User model declared');
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+      unique: true,
     },
     fullname: {
       type: DataTypes.STRING,
@@ -62,7 +66,7 @@ console.log('User model declared');
 }
 );
 
-console.log('User model initialized');
+User.associate();
 
 export default User;
 export { UserAttributes };

@@ -1,13 +1,14 @@
 import { Response, Request } from "express"
-import  productModel from '../models/Product';
+import User, { UserAttributes } from "../models/User";
+import  Product from '../models/Product';
 
 const getAllProducts = async (req: Request, res: Response) => {
   try {
-    const products = await productModel.findAll();
+    const products = await Product.findAll();
     res.json({ success: true, products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
 
@@ -16,47 +17,60 @@ const getProductsById = async (req: Request, res: Response) => {
     const productId = req.params.id;
     
      //find product by ID in the database
-     const product = await productModel.findByPk(productId);
+     const product = await Product.findByPk(productId);
      if (!product) {
       return res.status(404).json({ error: 'product not found' });
   }
-    res.json({ success: true, product });
+     res.json({ success: true, product });
 }   catch(error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ success: false, error: 'Internal server error' });
 }
 };
 
-const addProduct = async (productData: any, req: Request, res: Response) => {
+const addProduct = async (req: Request, res: Response, productData: any) => {
   try {
-    console.log('Received product data:', productData);
+    const { id, name, image, brand, category, description, price, countInStock } = req.body;
+      
+    if( req.user && 'userId' in req.user ) {
+      const userId: any = (req.user.userId as UserAttributes);
+      
+      const newProduct = await Product.create({ 
+      id,
+      userId,
+      name,
+      image,
+      brand,
+      category,
+      description,
+      price,
+      countInStock, 
+    });
+    
+    //Fetch the updated user data from the database
+    const updatedUser = await User.findByPk(userId, {
+      include: [{ model: Product, as: 'products' }],
+    });
 
-    //Validate that required fields are present
-    if (!productData.productName || !productData.productPrice || !productData.productCountInStock) {
-      return res.status(400).json({ error: 'Name, price, and countInStock are required' });
+    if (!updatedUser) {
+      throw new Error('Failed to retrieve updated user data');
     }
 
-    // Log the parsed values before creating the product
-    const parsedProductData = {
-      userId: productData.userId,
-      name: productData.productName,
-      image: productData.productImage,
-      brand: productData.productBrand,
-      category: productData.productCategory,
-      description: productData.productDescription,
-      price: parseFloat(productData.productPrice),
-      countInStock: parseInt(productData.productCountInStock),
-      rating: parseFloat(productData.productRating),
-      numReviews: parseInt(productData.productNumReviews),
-      id: productData.id,
-    };
+    // Update the session with the updated user data
+    req.user = updatedUser;
 
-    console.log('Parsed product data:', parsedProductData);
-
-    const newProduct = await productModel.create(parsedProductData);
-
-    res.status(201).json({ success: true, product: newProduct });
-  } catch (error) {
+    if (newProduct) {
+      console.log(newProduct);
+      
+      res.status(201).send({ success: true, product: newProduct });
+  } else {
+      res.status(401).json({ error: 'Failed to create the product' });
+  } 
+ }  else {
+    // Handle the case where req.user is undefined or doesn't have userId
+    res.status(401).json({ error: 'User not authenticated or missing userId' });
+}
+} catch(error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -67,7 +81,7 @@ const updateProduct = async (req: Request, res: Response) => {
     const productId = req.params.id;
     const { name, price, description } = req.body;
 
-    const [rowsUpdated] = await productModel.update(
+    const [rowsUpdated] = await Product.update(
       { name, price, description },
       { where: { id: productId } }
 );
@@ -76,7 +90,7 @@ const updateProduct = async (req: Request, res: Response) => {
 }
 
     // Find the updated product
-    const foundUpdatedProduct = await productModel.findByPk(productId);
+    const foundUpdatedProduct = await Product.findByPk(productId);
 
     res.json({ success: true, product: foundUpdatedProduct });
   } catch (error) {
@@ -88,7 +102,7 @@ const updateProduct = async (req: Request, res: Response) => {
 const deleteProduct = async (req: Request, res: Response) => {
   try {
     const productId = req.params.id;
-    const rowsDeleted = await productModel.destroy({ where: { id: productId } });
+    const rowsDeleted = await Product.destroy({ where: { id: productId } });
 
     if (rowsDeleted === 0) {
       return res.status(404).json({ error: 'Product not found' });

@@ -29,7 +29,7 @@ head
 block content
   .hero-container(style="background: linear-gradient(to bottom, #FFD700, #FF8C00); text-align: center;")
     h1(style="color: #333; margin-top: 50px; font-size: 36px; display: inline-block;") Welcome to IzzShopping
-    p(style="text-align: center; color: #666; margin-top: 20px; font-size: 18px;") Discover Amazing Products
+    p(style="text-align: center; color: #666; margin-top: 20px; font-size: 18px; font-family: Arial; ") Discover Amazing Products
     .signup-login-links(style="text-align: center; margin-top: 20px; display: inline-block;")
       a(href="/signup", style="background-color: #28A745; color: #fff; padding: 12px 24px; margin-right: 20px; text-decoration: none; border-radius: 4px; font-size: 16px;") Sign Up
       a(href="/login", style="background-color: #007BFF; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-size: 16px;") Log In
@@ -43,7 +43,7 @@ block content
           h3(style="color: gold; margin: 10px 0; font-family: Arial;") #{product.name}
           p(style="color: white; margin: 10px 0;font-family: Arial;") Category: #{product.category}
           p(style="color: white; margin: 10px 0; font-weight: 800;") Price: $#{product.price}
-          a(href=`/product/${product.id}`, style="background-color: #007BFF; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px;") View Details
+          a(href="/signup", style="background-color: #007BFF; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px;") View Details
 
   .signup-login-links(style="background: #f8f9fa; text-align: center; padding: 30px 0; margin-top: 50px;")
     p(style="color: #666; font-size: 18px;") Join us now and explore the world of shopping!

@@ -1,7 +1,5 @@
-// tests/productRoutes.test.js
-
 const request = require('supertest');
-const app = require('../dist/app'); // Update the path if needed
+const app = require('../dist/app'); 
 
 describe('Product Routes', () => {
   let productId; // This will store the ID of the created product for testing PUT and DELETE
@@ -9,7 +7,6 @@ describe('Product Routes', () => {
   // Test case for creating a new product
   test('POST /products - Should add a new product', async () => {
     const newProduct = {
-      userId: 1, // Assuming a user with ID 1 exists
       name: 'Test Product',
       price: 29.99,
       countInStock: 10,

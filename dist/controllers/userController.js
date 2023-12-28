@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = __importDefault(require("../models/User"));
 const getAllUsers = async (req, res) => {
     try {
-        //assuming user ID is available in req.params.id
         const users = await User_1.default.findAll();
         res.json({ success: true, users });
     }

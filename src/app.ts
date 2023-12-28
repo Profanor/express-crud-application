@@ -1,22 +1,25 @@
-require('dotenv').config();
-
 import express from 'express';
-import session  from 'express-session';
-import path from 'path';
-import logger from 'morgan';
 import createError from 'http-errors';
-import cookieParser from 'cookie-parser';
 import { Response, Request, NextFunction } from 'express';
-import initializeDatabase from './init-db';
-import './models/User';
-import './models/Product';
+import path from 'path';
+import session  from 'express-session';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import User from './models/User';
+import Product from './models/Product';
 
 const app = express();
 
-//Middleware to Initialize the database with sample data
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-  await initializeDatabase(req);
-  next();
+
+User.sync({ alter: true })
+ .then(()=> {
+  return Product.sync({ alter: true });
+})
+ .then(() => {
+  console.log('Models synced successfully');
+ })
+ .catch((error) => {
+  console.error('Error syncing models:', error);
 });
 
  // use the session middleware
@@ -38,7 +41,6 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
-
 
   // Routes
   import index from './routes/index'

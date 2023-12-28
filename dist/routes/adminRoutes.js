@@ -4,22 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const Product_1 = __importDefault(require("../models/Product"));
+const User_1 = __importDefault(require("../models/User")); // Assuming you have a User model
 const router = express_1.default.Router();
-// Display all products created by the logged-in user
+// Display all users registered on the eCommerce application
 router.get('/adminRoutes', async (req, res) => {
     try {
-        const userId = req.session.user.id;
-        if (!userId) {
-            // Redirect to login or handle the case where the user is not authenticated
-            return res.redirect('/login');
-        }
-        // Assuming you have a proper association between User and Product models
-        const userProducts = await Product_1.default.findAll({ where: { userId } });
-        res.render('admin', { title: 'Admin Dashboard', products: userProducts });
+        const users = await User_1.default.findAll(); // Retrieve all users
+        res.render('admin', { title: 'Admin Dashboard', users });
     }
     catch (error) {
-        console.error('Error fetching user products:', error);
+        console.error('Error fetching users:', error);
         res.render('error', { error: 'Internal server error' });
     }
 });

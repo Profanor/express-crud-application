@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const User_1 = __importDefault(require("../models/User"));
 const Product_1 = __importDefault(require("../models/Product"));
 const getAllProducts = async (req, res) => {
     try {
@@ -11,7 +12,7 @@ const getAllProducts = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
 const getProductsById = async (req, res) => {
@@ -26,33 +27,46 @@ const getProductsById = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
-const addProduct = async (productData, req, res) => {
+const addProduct = async (req, res, productData) => {
     try {
-        console.log('Received product data:', productData);
-        //Validate that required fields are present
-        if (!productData.productName || !productData.productPrice || !productData.productCountInStock) {
-            return res.status(400).json({ error: 'Name, price, and countInStock are required' });
+        const { id, name, image, brand, category, description, price, countInStock } = req.body;
+        if (req.user && 'userId' in req.user) {
+            const userId = req.user.userId;
+            const newProduct = await Product_1.default.create({
+                id,
+                userId,
+                name,
+                image,
+                brand,
+                category,
+                description,
+                price,
+                countInStock,
+            });
+            //Fetch the updated user data from the database
+            const updatedUser = await User_1.default.findByPk(userId, {
+                include: [{ model: Product_1.default, as: 'products' }],
+            });
+            if (!updatedUser) {
+                throw new Error('Failed to retrieve updated user data');
+            }
+            // Update the session with the updated user data
+            req.user = updatedUser;
+            if (newProduct) {
+                console.log(newProduct);
+                res.status(201).send({ success: true, product: newProduct });
+            }
+            else {
+                res.status(401).json({ error: 'Failed to create the product' });
+            }
         }
-        // Log the parsed values before creating the product
-        const parsedProductData = {
-            userId: productData.userId,
-            name: productData.productName,
-            image: productData.productImage,
-            brand: productData.productBrand,
-            category: productData.productCategory,
-            description: productData.productDescription,
-            price: parseFloat(productData.productPrice),
-            countInStock: parseInt(productData.productCountInStock),
-            rating: parseFloat(productData.productRating),
-            numReviews: parseInt(productData.productNumReviews),
-            id: productData.id,
-        };
-        console.log('Parsed product data:', parsedProductData);
-        const newProduct = await Product_1.default.create(parsedProductData);
-        res.status(201).json({ success: true, product: newProduct });
+        else {
+            // Handle the case where req.user is undefined or doesn't have userId
+            res.status(401).json({ error: 'User not authenticated or missing userId' });
+        }
     }
     catch (error) {
         console.error(error);

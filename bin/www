@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 require('dotenv').config();
+
 const app = require('../dist/app').default;
 const debug = require('debug')('week5-009:server');
 const http = require('http');

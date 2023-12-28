@@ -3,7 +3,6 @@ import { Response, Request} from 'express';
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
-    //assuming user ID is available in req.params.id
     const users = await userModel.findAll();
     res.json({ success: true, users });
   } catch(error) {

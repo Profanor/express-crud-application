@@ -15,33 +15,40 @@ block content
         strong(style="font-weight: bold; margin-right: 10px;") Email:
         span(style="color: #555;")= user.email
 
+        // Display success message if available
+      if successMessage
+        script.
+          alert("#{successMessage}");
+
       // Add product form
-      form(action="/add-product", method="post", style="margin-top: 20px; text-align: left;")
+      form(action="/add-product", method="POST", style="margin-top: 20px; text-align: left;")
         h2(style="margin-bottom: 10px;") Add Product
-        label(for="productName") Product Name:
-        input(type="text", name="productName", required, style="width: 100%; padding: 8px; margin-bottom: 10px;")
-        label(for="productDescription") Product Description:
-        textarea(name="productDescription", required, style="width: 100%; padding: 8px; margin-bottom: 10px;")
-        label(for="productImage") Product Image URL:
-        input(type="text", name="productImage", style="width: 100%; padding: 8px; margin-bottom: 10px;")
-        label(for="productBrand") Product Brand:
-        input(type="text", name="productBrand", style="width: 100%; padding: 8px; margin-bottom: 10px;")
-        label(for="productCategory") Product Category:
-        input(type="text", name="productCategory", style="width: 100%; padding: 8px; margin-bottom: 10px;")
-        label(for="productPrice") Product Price:
-        input(type="number", name="productPrice", step="0.01", required, style="width: 100%; padding: 8px; margin-bottom: 10px;")
-        label(for="productCountInStock") Count In Stock:
-        input(type="number", name="productCountInStock", required, style="width: 100%; padding: 8px; margin-bottom: 10px;")
+        label(for="name") Product Name:
+        input(type="text", name="name", required, style="width: 100%; padding: 8px; margin-bottom: 10px;")
+        label(for="description") Product Description:
+        textarea(name="description", required, style="width: 100%; padding: 8px; margin-bottom: 10px;")
+        label(for="image") Product Image URL:
+        input(type="text", name="image", style="width: 100%; padding: 8px; margin-bottom: 10px;")
+        label(for="brand") Product Brand:
+        input(type="text", name="brand", style="width: 100%; padding: 8px; margin-bottom: 10px;")
+        label(for="category") Product Category:
+        input(type="text", name="category", style="width: 100%; padding: 8px; margin-bottom: 10px;")
+        label(for="price") Product Price:
+        input(type="number", name="price", step="0.01", required, style="width: 100%; padding: 8px; margin-bottom: 10px;")
+        label(for="countInStock") Count In Stock:
+        input(type="number", name="countInStock", required, style="width: 100%; padding: 8px; margin-bottom: 10px;")
         button(type="submit", style="background-color: #28A745; color: #fff; padding: 10px 20px; border: none; cursor: pointer;") Add Product
 
+      // log user.products for debugging
+      - console.log('User Products:', user.products)
       // List of user's products
       if user.products && user.products.length > 0
         h2(style="margin-top: 20px;") Your Products
         ul(style="list-style: none; padding: 0;")
           each product in user.products
             li(style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f8f9fa;")
-              strong(style="font-size: 1.2em;")= product.productName
-              p= product.productDescription
+              strong(style="font-size: 1.2em;")= product.name
+              p= product.description
               // Link to edit product page
               a(href="/edit-product/#{product.id}", style="margin-right: 10px; color: #007BFF;") Edit
               // Link to delete product endpoint (use JavaScript to confirm)
@@ -53,4 +60,3 @@ block content
 
     else
       p(style="margin-top: 20px;") User information not available
-
